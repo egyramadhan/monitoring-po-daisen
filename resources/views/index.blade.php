@@ -14,7 +14,6 @@
                             <strong class="card-title">Monitoring PO - Procurement</strong>
                         </div>
                         <div class="card-body">
-                           
                             <table class="table table-striped table-bordered">
                                 <thead>
                                   <tr>
@@ -43,7 +42,7 @@
                                     @endforeach
                                 </tbody>
                               </table>
-                              {{-- {{ $data->links() }} --}}
+                              {{ $data->links() }}
                         </div>
                     </div>
                 </div>

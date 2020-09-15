@@ -28,7 +28,7 @@ class MonitoringController extends Controller
         $datas = DB::table('purchase_orders')
             ->join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
             ->get();
-        dd($datas);
+        // dd($datas);
         foreach ($datas as $key => $data) {
             # code...
             $check_data = monitoring_po_daisen::where('po_no', $data->naming_series)->first();
@@ -85,10 +85,8 @@ class MonitoringController extends Controller
 
     public function dashboard()
     {
-        // 
-        $data = DB::table('purchase_requests')
-            ->join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-            ->get();
+        $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+            ->paginate(5);
         return view('index', compact('data'));
     }
 
@@ -128,19 +126,16 @@ class MonitoringController extends Controller
     {
 
         $parent_po = DB::table('purchase_orders')->where('naming_series', $id)->first();
-
-        $check_if_receipt = DB::table('material_receives')->where('parent_po', $id)->first();
-
-        if (empty($check_if_receipt)) {
+        $data = DB::table('purchase_orders')
+            ->join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
+            ->where('purchase_orders.naming_series', '=', $id)
+            ->where(function ($query) {
+                $query->where('purchase_order_items.is_sync', '=', "0");
+            })
+            ->get();
+        // dd($data);
+        if (!empty($data)) {
             # code...
-            $data = DB::table('purchase_orders')
-                ->join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
-                ->where('purchase_orders.naming_series', '=', $id)
-                ->where(function ($query) {
-                    $query->where('purchase_order_items.is_sync', '=', "0");
-                })
-                ->get();
-            // dd($data);
             foreach ($data as $key => $dt) {
                 # code...
                 if ($dt->is_sync === "0") {
@@ -159,33 +154,62 @@ class MonitoringController extends Controller
                         ]);
                 }
             }
-
             $po = DB::table('monitoring_po_daisens')
                 ->select('code', 'description', 'po_qty', 'uom', 'currency', DB::raw('sum(qty_receipt) as qty_receipt'), DB::raw('(sum(qty_receipt) - po_qty) as balance'))
                 ->where('po_no', $id)
                 ->groupBy('code', 'description', 'po_qty', 'uom', 'currency')
                 ->get();
-        } elseif (!empty($check_if_receipt)) {
-
-            $check_datas = DB::table('monitoring_po_daisens')->where('po_no', $id)->first();
-            // dd($check_data);
-            if (!empty($check_datas)) {
-                # code...
-                // dd($check_data);
-                $update_data = monitoring_po_daisen::where('code', $check_datas->code)
-                    ->where(function ($query) {
-                        $query->where('po_no', '=', $check_data->po_no);
-                    })->get();
-                // ->update([
-                //     'qty_receipt' => $check_if_receipt->qty_receipt
-                // ]);
-                dd($update_data);
-            }
-            // $po = DB::table('purchase_orders')
-            //     ->join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
-            //     ->where('purchase_orders.naming_series', '=', $id)
-            //     ->get();
         }
+
+        $check_if_receipts = DB::table('material_receives')
+            ->join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
+            ->where('material_receives.parent_po', '=', $id)
+            ->where(function ($query) {
+                $query->where('material_receive_items.is_calculated', '=', "0");
+            })
+            ->get();
+        // dd($check_if_receipts);
+        if (!empty($check_if_receipts)) {
+            # code...
+            foreach ($check_if_receipts as $key => $check_if_receipt) {
+                # code...
+                if ($check_if_receipt->is_calculated === "0") {
+                    # code...
+                    $number_po = $check_if_receipt->parent_po;
+                    $code = $check_if_receipt->code;
+                    $receipt = $check_if_receipt->qty_receipt;
+                    $check_have_qty_receive = DB::table('monitoring_po_daisens')->where('po_no', '=', $number_po)
+                        ->where('code', '=', $code)
+                        ->first();
+                    // dd($check_have_qty_receive);
+                    if (!empty($check_have_qty_receive->qty_receipt)) {
+                        # code...
+                        $update_qty_receipt = DB::table('monitoring_po_daisens')->where('po_no', '=', $number_po)
+                            ->where('code', '=', $code)
+                            ->update(['qty_receipt' => $receipt + $check_have_qty_receive->qty_receipt]);
+                        $update_calculated = Material_receive_item::where('naming_series_id', $check_if_receipt->naming_series)
+                            ->update([
+                                'is_calculated' => '1'
+                            ]);
+                    } else {
+                        # code...
+                        $update_qty_receipt = DB::table('monitoring_po_daisens')->where('po_no', '=', $number_po)
+                            ->where('code', '=', $code)
+                            ->update(['qty_receipt' => $receipt]);
+                        $update_calculated = Material_receive_item::where('naming_series_id', $check_if_receipt->naming_series)
+                            ->update([
+                                'is_calculated' => '1'
+                            ]);
+                    }
+                }
+            }
+        }
+
+        $po = DB::table('monitoring_po_daisens')
+            ->select('code', 'description', 'po_qty', 'uom', 'currency', DB::raw('sum(qty_receipt) as qty_receipt'), DB::raw('(sum(qty_receipt) - po_qty) as balance'))
+            ->where('po_no', $id)
+            ->groupBy('code', 'description', 'po_qty', 'uom', 'currency')
+            ->get();
 
         $material_receipt = DB::table('material_receives')
             ->join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
