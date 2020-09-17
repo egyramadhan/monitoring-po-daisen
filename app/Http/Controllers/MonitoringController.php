@@ -12,6 +12,7 @@ use App\Material_receive;
 use App\Material_receive_item;
 use App\monitoring_po_daisen;
 use DB;
+use Facade\FlareClient\Http\Response;
 
 class MonitoringController extends Controller
 {
@@ -29,46 +30,124 @@ class MonitoringController extends Controller
 
     public function dashboard()
     {
+
         $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
             ->paginate(5);
-        $data_sum_orders = Purchase_order_item::select(DB::raw('naming_series_id, sum(qty) as total_po'))
-            ->groupBy('naming_series_id')->get();
-        foreach ($data_sum_orders as $key => $data_sum_order) {
+        foreach ($data as $key => $dt) {
             # code...
-            if (!empty($data_sum_order)) {
+            // dd($dt);
+            $check = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
+                ->select(DB::raw('sum(qty_receipt) as total_receipt'))
+                ->where('parent_po', $dt->naming_series)->first();
+            if (!empty($check)) {
                 # code...
-                $data_sum_receipts = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
-                    ->select(DB::raw('material_receives.parent_po, sum(qty_receipt) as total_mr'))
-                    ->groupBy('material_receives.parent_po')
-                    ->get();
-                foreach ($data_sum_receipts as $key => $data_sum_receipt) {
+                $sum_order = Purchase_order_item::select(DB::raw('sum(qty) as total_qty'))
+                    ->where('naming_series_id', $dt->naming_series)
+                    ->first();
+                if ($check->total_receipt < $sum_order->total_qty) {
                     # code...
-                    if (!empty($data_sum_receipt)) {
-                        # code...
-                        if ($data_sum_order->naming_series_id == $data_sum_receipt->parent_po) {
-                            # code...
-                            // dd($data_sum_order->total_po, $data_sum_receipt->total_mr);
-                            if ($data_sum_order->total_po == 0) {
-                                # code...
-                                $status = 'to receipt';
-                            } elseif ($data_sum_order->total_po > $data_sum_receipt->total_mr) {
-                                # code...
-                                $status = 'partial';
-                            } elseif ($data_sum_order->total_po == $data_sum_receipt->total_mr) {
-                                # code...
-                                $status = 'completed';
-                            }
-                        }
-                    } elseif (empty($data_sum_receipt)) {
-                        # code...
-                        $status = 'to receipt';
-                    }
+                    $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
+                        ->update([
+                            'status' => 'partial'
+                        ]);
+                } elseif ($check->total_receipt == $check->total_receipt) {
+                    # code...
+                    $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
+                        ->update([
+                            'status' => 'completed'
+                        ]);
                 }
+
+                // dd('partial');
+            } else {
+                # code...
+                $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
+                    ->update([
+                        'status' => 'to receipt'
+                    ]);
             }
         }
-        $hasil = $status;
+        // dd($data);
+        // $datas = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+        //     ->join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
+        //     ->select(DB::raw('purchase_order_items.naming_series_id, sum(purchase_order_items.qty) as total_po'))
+        //     ->groupBy('purchase_order_items.naming_series_id')
+        //     ->get();
+        // foreach ($datas as $key => $data) {
+        //     # code...
+        //     $data_check = Material_receive::where('parent_po', $data->naming_series_id)->get();
+        //     if (!empty($data_check)) {
+        //         # code...
+        //         $data_seconds = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
+        //             ->select(DB::raw('sum(material_receive_items.qty_receipt) as total_receipt'))
+        //             ->where('material_receives.parent_po', $data->naming_series_id)
+        //             ->first();
+        //         // dd($data_seconds);
+        //         $data_thirty = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+        //             ->where('purchase_orders.naming_series', $data->naming_series_id)
+        //             ->first();
+        //         // dd($data_seconds, $data_thirty);
+        //         $a = array(
+        //             // 0 =>
+        //             array(
+        //                 'naming_series' => $data->naming_series_id,
+        //                 'total_po' => $data->total_po,
+        //                 'total_receipt' => $data_seconds->total_receipt,
+        //                 'posting_date' => $data_thirty->schedule_date,
+        //                 'request_by' => $data_thirty->request_by,
+        //                 'requested_by_date' => $data_thirty->requested_by_date,
+        //                 'material_request' => $data_thirty->material_request,
+        //                 'supplier' => $data_thirty->supplier
+        //             ),
+        //         );
+        //     }
+        // }
 
-        return view('index', compact('data', 'hasil'));
+        // dd($a);
+        // $data2 = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+        //     ->join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
+        //     ->join('monitoring_po_daisens', 'purchase_orders.naming_series', '=', 'monitoring_po_daisens.po_no')
+        //     ->select(DB::raw('purchase_order_items.naming_series_id, sum(monitoring_po_daisens.qty_receipt) as total_receipt'))
+        //     ->groupBy('purchase_order_items.naming_series_id')
+        //     ->get();
+
+        // $data_sum_orders = Purchase_order_item::select(DB::raw('naming_series_id, sum(qty) as total_po'))
+        //     ->groupBy('naming_series_id')->get();
+        // foreach ($data_sum_orders as $key => $data_sum_order) {
+        //     # code...
+        //     if (!empty($data_sum_order)) {
+        //         # code...
+        //         $data_sum_receipts = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
+        //             ->select(DB::raw('material_receives.parent_po, sum(qty_receipt) as total_mr'))
+        //             ->groupBy('material_receives.parent_po')
+        //             ->get();
+        //         foreach ($data_sum_receipts as $key => $data_sum_receipt) {
+        //             # code...
+        //             if (!empty($data_sum_receipt)) {
+        //                 # code...
+        //                 if ($data_sum_order->naming_series_id == $data_sum_receipt->parent_po) {
+        //                     # code...
+        //                     if ($data_sum_order->total_po == 0) {
+        //                         # code...
+        //                         $status = 'to receipt';
+        //                     } elseif ($data_sum_order->total_po > $data_sum_receipt->total_mr) {
+        //                         # code...
+        //                         $status = 'partial';
+        //                     } elseif ($data_sum_order->total_po == $data_sum_receipt->total_mr) {
+        //                         # code...
+        //                         $status = 'completed';
+        //                     }
+        //                 }
+        //             } elseif (empty($data_sum_receipt)) {
+        //                 # code...
+        //                 $status = 'to receipt';
+        //             }
+        //         }
+        //     }
+        // }
+        // $hasil = $status;
+
+        return view('index', compact('data'));
     }
 
     /**

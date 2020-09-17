@@ -34,8 +34,14 @@
                                         <td>{{ $dt->supplier}}</td>
                                         <td>{{ $dt->posting_date}}</td>
                                         <td>{{ $dt->requested_by_date}}</td>
-                                        <td><span class="badge badge-warning">To Receive</span></td>
-                                        <td><a href="/show/{{ $dt->naming_series }}" class="btn btn-primary"><i class="fa fa-info"></i></a></td>
+                                        @if ( $dt->status  == 'to receipt')
+                                        <td><span class="badge badge-warning">to receipt</span></td>
+                                        @elseif ( $dt->status == 'partial')
+                                        <td><span class="badge badge-warning">partial</span></td>  
+                                        @else 
+                                        <td><span class="badge badge-success">completed</span></td>
+                                        @endif
+                                        <td><a href="/show/{{ $dt['naming_series'] }}" class="btn btn-primary"><i class="fa fa-info"></i></a></td>
                                       </tr>
                                     @endforeach
                                 </tbody>
