@@ -26,5 +26,5 @@ Route::get('/material_receipt', 'MaterialReceiveController@get_material_receipt'
 // });
 
 Route::get('/show/{id}', 'MonitoringController@show');
-// Route::get('/receipt/tampil', 'MonitoringController@tampil');
-// Route::get('/receipts/tampil/{$id}', 'MonitoringController@tampil');
+Route::get('autocomplete', array('as' => 'autocomplete', 'uses' => 'SearchController@autocomplete'));
+Route::get('autocomplete_po', array('as' => 'autocomplete_po', 'uses' => 'SearchController@autocomplete_po'));
