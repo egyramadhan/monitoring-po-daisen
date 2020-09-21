@@ -42,7 +42,7 @@
 
             <div class="header-menu">
 
-                <div class="col-sm-7">
+                <div class="col-sm-3">
                     <div class="header-left">
                         <img src="{{ asset('style/images/logo_daisen.png') }}" width="80" alt="">
                         <div class="form-inline">
@@ -54,8 +54,13 @@
 
                     </div>
                 </div>
-
-                <div class="col-sm-5">
+                <div class="col-sm-2">
+                    <div class="card-body card-block">
+                    </div>
+                </div>
+                <div class="col-`-5">
+                    <div class="card-body card-block">
+                    </div>
                 </div>
             </div>
 

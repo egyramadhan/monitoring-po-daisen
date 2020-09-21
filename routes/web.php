@@ -17,9 +17,13 @@ Route::get('/', function () {
 
 Route::get('/monitoring', 'MonitoringController@index');
 Route::get('/monitoring-po', 'MonitoringController@dashboard');
+
 Route::get('/purchase_requests', 'PurchaseRequestController@get_material_request');
 Route::get('/purchase_orders', 'PurchaseOrderController@get_purchase_order');
 Route::get('/material_receipt', 'MaterialReceiveController@get_material_receipt');
+Route::get('/item-price', 'ListPriceController@getDataPrice');
+Route::get('/item-from-po', 'ListPriceController@getItemPricePO');
+Route::get('/list-price', 'ListPriceController@index');
 
 // Route::get('/show', function () {
 //     return view('receipt');

@@ -56,112 +56,20 @@ class MonitoringController extends Controller
                 ->where('purchase_orders.supplier', 'LIKE', '%' . $supplier . '%')
                 ->paginate(5);
         }
-        // if (!empty($po_number)) {
-        //     $data->where('purchase_orders.naming_series', 'LIKE', '%' . $po_number . '%');
-        // }
 
-        // if (!empty($date)) {
-        //     $data->where('purchase_orders.posting_date', 'LIKE', '%' . $date . '%');
-        // }
+        if (!empty($date)) {
+            # code...
+            $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+                ->where('purchase_orders.posting_date', 'LIKE', '%' . $date . '%')
+                ->paginate(5);
+        }
 
-        // if (!empty($supplier)) {
-        //     # code...
-        //     $data->where('purchase_orders.supplier', 'LIKE', '%' . $supplier . '%');
-        // }
-
-        // if (!empty($status)) {
-        //     # code...
-        //     $data->where('purchase_orders.status', 'LIKE', '%' . $status . '%');
-        // }
-        // dd($data);
-        // $data->get();
-
-        // dd($data);
-
-        // dd($po_number, $supplier);
-        // if ($po_number) {
-        //     # code...
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->where('purchase_orders.naming_series', 'LIKE', '%' . $po_number . '%')
-        //         ->paginate(5);
-        //     // dd(123);
-        // } elseif ($date) {
-        //     # code...
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->where('purchase_orders.posting_date', 'LIKE', '%' . $date . '%')
-        //         ->paginate(5);
-        // } elseif ($supplier) {
-        //     # code...
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->where('purchase_orders.supplier', 'LIKE', '%' . $supplier . '%')
-        //         ->paginate(5);
-        // } elseif ($status) {
-        //     # code...
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->where('purchase_orders.supplier', 'LIKE', '%' . $status . '%')
-        //         ->paginate(5);
-        // }
-        // if(!empty($po_number) ? : ){
-
-        // if (!empty($po_number) ? : ) {
-        //     # code...
-        //     // dd(2);
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->paginate(5);
-        //     foreach ($data as $key => $dt) {
-        //         # code...
-        //         $check = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
-        //             ->select(DB::raw('sum(qty_receipt) as total_receipt'))
-        //             ->where('parent_po', $dt->naming_series)->first();
-        //         if (!empty($check)) {
-        //             # code...
-        //             $sum_order = Purchase_order_item::select(DB::raw('sum(qty) as total_qty'))
-        //                 ->where('naming_series_id', $dt->naming_series)
-        //                 ->first();
-        //             if ($check->total_receipt < $sum_order->total_qty) {
-        //                 # code...
-        //                 $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
-        //                     ->update([
-        //                         'status' => 'partial'
-        //                     ]);
-        //             } elseif ($check->total_receipt == $check->total_receipt) {
-        //                 # code...
-        //                 $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
-        //                     ->update([
-        //                         'status' => 'completed'
-        //                     ]);
-        //             }
-        //         } else {
-        //             # code...
-        //             $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
-        //                 ->update([
-        //                     'status' => 'to receipt'
-        //                 ]);
-        //         }
-        //     }
-        // } elseif ($po_number && $date && $supplier && $status) {
-        //     # code...
-        //     // dd($po_number);
-        //     dd(1);
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->where('purchase_orders.naming_series', $po_number)
-        //         ->orWhere('purchase_orders.date', $date)
-        //         ->orWhere('purchase_orders.supplier', $supplier)
-        //         ->orWhere('purchase_orders.status', $status)
-        //         ->paginate(5);
-        // }
-        // if ($request->has('')) {
-        //     $supplier = $request->q;
-        //     // dd($supplier);
-        //     $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-        //         ->where('purchase_orders.supplier', 'LIKE', '%$supplier%')->get();
-        //     return response()->json($data);
-        // } elseif (!$request->has('q')) {
-        //     # code...
-        //     $cari = $request->q;
-        // }
-
-
+        if (!empty($status)) {
+            # code...
+            $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+                ->where('purchase_orders.status', 'LIKE', '%' . $status . '%')
+                ->paginate(5);
+        }
         return view('index', compact('data'));
     }
 

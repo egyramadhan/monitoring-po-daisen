@@ -13,6 +13,17 @@
                         </div>
                         <div class="card-body">
                           <div class="card-body card-block">
+                            <div class="col-sm-1">
+                                <a class="btn btn-success btn-sm" href="">History List Price</a>
+                            </div>
+                            <div class="col-sm-1">
+                              <a class="btn btn-warning btn-sm header-left" href="">Material Return</a>
+                          </div>
+                            <div class="col-sm-1">
+                                <a class="btn btn-secondary btn-sm header-left" href="">Import</a>
+                            </div>
+                          </div>
+                          <div class="card-body card-block">
                             <form action="/monitoring-po" method="get">
                               <div class="col-md-3">
                                 <div class="form-group">
@@ -85,24 +96,4 @@
             </div>
         </div>
     </div> 
-    {{-- <script type="text/javascript">
-      var path = "{{ route('autocomplete') }}";
-      $('input.typeahead1').typeahead({
-          source:  function (supp, process) {
-          return $.get(path, { supp: supp }, function (sup_data) {
-                  return process(sup_data);
-              });
-          }
-      });
-    </script>
-    <script type="text/javascript">
-      var path = "{{ route('autocomplete_po') }}";
-      $('input.typeahead2').typeahead({
-          source:  function (po_no, process) {
-          return $.get(path, { po_no: po_no }, function (data) {
-                  return process(data);
-              });
-          }
-      });
-  </script> --}}
 @endsection

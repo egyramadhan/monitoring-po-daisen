@@ -318,4 +318,49 @@ class TransactionService
         ];
         // use $body
     }
+
+    public function getItemPrice()
+    {
+        static::login();
+        $url = $this->url . 'api/resource/Item%20Price?fields=["name"]&limit_page_length=9999999999999999';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_TIMEOUT, (120));
+        $response = curl_exec($ch);
+        $header = curl_getinfo($ch);
+        $error_no = curl_errno($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+        $body = json_decode($response, true);
+        return $body;
+    }
+
+    public function getItemPriceDetail($name)
+    {
+        static::login();
+        // $dataFields = json_encode(["item_group", "amount", "qty", "rate", "stock_uom", "item_name", "uom", "description"]);
+        $url = $this->url . 'api/resource/Item%20Price/' . $name . '?fields=["name","item_code","description","price_list_rate","currency","creation"]&limit_page_length=9999999999999999';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_TIMEOUT, (120));
+        $response = curl_exec($ch);
+        $header = curl_getinfo($ch);
+
+        $error_no = curl_errno($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        $body = json_decode($response, true);
+        return $body;
+    }
 }

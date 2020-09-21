@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Libraries\TransactionService;
 use App\Purchase_order;
 use App\Purchase_order_item;
+use APP\Price;
 use DB;
 
 class PurchaseOrderController extends Controller
