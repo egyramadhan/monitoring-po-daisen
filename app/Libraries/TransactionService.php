@@ -344,7 +344,7 @@ class TransactionService
     {
         static::login();
         // $dataFields = json_encode(["item_group", "amount", "qty", "rate", "stock_uom", "item_name", "uom", "description"]);
-        $url = $this->url . 'api/resource/Item%20Price/' . $name . '?fields=["name","item_code","description","price_list_rate","currency","creation"]&limit_page_length=9999999999999999';
+        $url = $this->url . 'api/resource/Item%20Price/' . $name . '?fields=["item_code","description","price_list_rate","currency","creation"]&limit_page_length=9999999999999999';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);

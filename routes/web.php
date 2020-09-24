@@ -25,10 +25,8 @@ Route::get('/item-price', 'ListPriceController@getDataPrice');
 Route::get('/item-from-po', 'ListPriceController@getItemPricePO');
 Route::get('/list-price', 'ListPriceController@index');
 
-// Route::get('/show', function () {
-//     return view('receipt');
-// });
 
 Route::get('/show/{id}', 'MonitoringController@show');
+Route::get('/show_history/{item_code}', 'ListPriceController@show');
 Route::get('autocomplete', array('as' => 'autocomplete', 'uses' => 'SearchController@autocomplete'));
 Route::get('autocomplete_po', array('as' => 'autocomplete_po', 'uses' => 'SearchController@autocomplete_po'));

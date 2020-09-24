@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Price;
+use App\Purchase_order;
 use App\Purchase_order_item;
+use App\Masteritem;
 use App\Libraries\TransactionService;
 use Illuminate\Http\Request;
 use DB;
@@ -46,14 +48,29 @@ class ListPriceController extends Controller
 
     public function getItemPricePO()
     {
-        $get_item_prices = Purchase_order_item::all();
+        $get_item_prices = Purchase_order::join('purchase_order_items', 'purchase_orders.naming_series', '=', 'purchase_order_items.naming_series_id')
+            ->get();
         foreach ($get_item_prices as $key => $get_item_price) {
             # code...
-            $check_item_price = Price::where('item_code', $get_item_price->code)->first();
+            $check_item_price = Masteritem::where('item_code', $get_item_price->code)->first();
             // dd($check_item_price);
+            //master data jika tidak ada didatabase create baru
             if (empty($check_item_price)) {
                 # code...
-                $data_insert = Price::create([
+                $data_insert = Masteritem::create([
+                    'item_code' => $get_item_price->code,
+                    'description' => $get_item_price->description,
+                    'supplier' => $get_item_price->supplier,
+                ]);
+            }
+
+            $check_po_in_price = Price::where('no_po', $get_item_price->naming_series)->where('item_code', $get_item_price->code)->first();
+
+            if (empty($check_po_in_price)) {
+                # code...
+                $data_insert_price = Price::create([
+                    'master_item_id' => $check_item_price->id,
+                    'no_po' => $get_item_price->naming_series,
                     'item_code' => $get_item_price->code,
                     'description' => $get_item_price->description,
                     'price_buying' => $get_item_price->price,
@@ -62,30 +79,43 @@ class ListPriceController extends Controller
                 ]);
             }
 
-            // dd($check_item_price->price_buying, );
-            if (!empty($check_item_price)) {
-                # code...
-                if ($check_item_price->price_buying != $get_item_price->price) {
-                    # code...
-                    $data_insert = Price::create([
-                        'item_code' => $get_item_price->code,
-                        'description' => $get_item_price->description,
-                        'price_buying' => $get_item_price->price,
-                        'currency' => 'IDR',
-                        'creation' => $get_item_price->created_at
-                    ]);
-                }
-            }
+            // if (!empty($check_item_price)) {
+            //     # code...
+            //     if ($check_item_price->price_buying != $get_item_price->price) {
+            //         # code...
+            //         $data_insert = Price::create([
+            //             'master_item_id' => $check_item_price->id,
+            //             'item_code' => $get_item_price->code,
+            //             'description' => $get_item_price->description,
+            //             'price_buying' => $get_item_price->price,
+            //             'currency' => 'IDR',
+            //             'creation' => $get_item_price->created_at
+            //         ]);
+            //     }
+            // }
         }
         return response()->json(['message' => 'data updated', 'code' => '200']);
     }
 
     public function index()
     {
-        //
-
-        $data = Price::paginate(10);
-
+        // $data =  DB::table('prices')
+        //     // ->join('prices', 'master_items.id', '=', 'prices.master_item_id')
+        //     ->select('item_code', 'description', 'price_buying')
+        //     ->whereRaw('creation in (select max(creation) from prices group by (item_code) order by (item_code) DESC )')
+        //     ->get();
+        // dd($data);
+        $data = Price::orderBy('creation', 'desc')
+            ->groupBy('item_code')->get();
+        // dd($data);
+        return $data;
+        $data = DB::select("SELECT master_items.supplier, prices.item_code, prices.`description`, prices.price_buying, MAX(creation)
+        FROM master_items
+        INNER JOIN prices ON master_items.`id` = prices.`master_item_id`
+        GROUP BY prices.`item_code`
+        ORDER BY prices.`creation` DESC;
+        ");
+        dd($data);
         return view('price_list', compact('data'));
     }
 
@@ -116,9 +146,10 @@ class ListPriceController extends Controller
      * @param  \App\Price  $price
      * @return \Illuminate\Http\Response
      */
-    public function show(Price $price)
+    public function show($item_code)
     {
-        //
+        $shows = Price::where('item_code', $item_code)->get();
+        return $shows;
     }
 
     /**
