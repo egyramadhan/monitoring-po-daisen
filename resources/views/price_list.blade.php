@@ -43,7 +43,7 @@ ul.timeline > li:before {
                         <strong class="card-title">History List Price - Procurement</strong>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped table-bordered">
+                        {{-- <table class="table table-striped table-bordered">
                             <thead>
                               <tr>
                                 <th scope="col">Item Code</th>
@@ -60,18 +60,42 @@ ul.timeline > li:before {
                                     <td>{{ $dt->item_code}}</td>
                                     <td>{{ $dt->description}}</td>
                                     <td>{{ $dt->supplier}}</td>
-                                    <td>{{ $dt->price_buying}}</td>
-                                    <td></td>
+                                    @if ($dt->price_buying == 0)
+                                    <td><span class="">{{ $dt->price_buying}}</span></td>
+                                    @elseif ($dt->price_buying != 0)
+                                    <td><span class="badge badge-success">{{ $dt->price_buying}}</span></td>
+                                    @endif
+                                    @if ($dt->deviation == 0)
+                                    <td><span class="">{{ $dt->deviation}}</span></td>
+                                    @elseif ($dt->deviation != 0)
+                                    <td><span class="badge badge-warning">{{ $dt->deviation}}</span></td>
+                                    @endif
                                     <td> 
                                       {{-- <a href="/show_history/{{ $dt->item_code }}" value="{{ $dt->item_code }}" class="btn btn-primary btn-sm btn_history" data-toggle="modal" data-target="#mediumModal"><span class="fa fa-eye"></span></a> --}}
-                                      <button class="btn btn-primary btn-sm btn_history" data-toggle="modal" data-target="#mediumModal" value="{{ $dt->item_code }}"><span class="fa fa-eye"></span></button>
+                                      {{-- <button class="btn btn-primary btn-sm btn_history" data-toggle="modal" data-target="#mediumModal" value="{{ $dt->item_code }}"><span class="fa fa-eye"></span></button>
                                     </td>
                                   </tr>
                                 @endforeach 
                             </tbody>
-                          </table>
+                          </table>  --}}
                           {{-- {{ $data->links() }} --}}
+                          <table class="table table-striped table-boldered nowrap data-table" id="datatable" style="width:100%;">
+                            <thead>
+                              <tr>
+                                <th>Item Code</th>
+                                <th>Description</th>
+                                <th>Supplier</th>
+                                <th>Last Price</th>
+                                <th>Deviation</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
 
+                            </tbody>
+                          </table>
+                          {{-- {!! $dataTable->table() !!}  --}}
+                          {{-- {!! $dataTable->scripts() !!} --}}
                           <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -124,12 +148,22 @@ ul.timeline > li:before {
         }) 
     });
 </script> --}}
-<script>
-  $(document).ready(function() {
-    $('#example').DataTable({
-      "processing": true
-      // "serverSide": true
+<script type="text/javascript">
+  $(function () {
+    
+    var table = $('.data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('prices.index') }}",
+        columns: [
+            {data: 'item_code', name: 'item_code'},
+            {data: 'description', name: 'description'},
+            {data: 'supplier', name: 'supplier'},
+            {data: 'price_buying', name: 'price_buying'},
+            {data: 'deviation', name: 'deviation'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
     });
-} );
+  });
 </script>
 @endsection

@@ -9,6 +9,9 @@ use App\Masteritem;
 use App\Libraries\TransactionService;
 use Illuminate\Http\Request;
 use DB;
+use DataTables;
+use Yajra\DataTables\Facades\DataTables as FacadesDataTables;
+use App\DataTables\ExportDataTable;
 
 class ListPriceController extends Controller
 {
@@ -19,6 +22,7 @@ class ListPriceController extends Controller
         DB::beginTransaction();
         try {
             $get_item_price = $service->getItemPrice();
+            dd($get_item_price);
             foreach ($get_item_price['data'] as $key => $get_item_price) {
                 $check_data = Price::where('naming_series', $get_item_price['name'])->first();
                 if (empty($check_data)) {
@@ -97,26 +101,38 @@ class ListPriceController extends Controller
         return response()->json(['message' => 'data updated', 'code' => '200']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // $data =  DB::table('prices')
-        //     // ->join('prices', 'master_items.id', '=', 'prices.master_item_id')
-        //     ->select('item_code', 'description', 'price_buying')
-        //     ->whereRaw('creation in (select max(creation) from prices group by (item_code) order by (item_code) DESC )')
-        //     ->get();
-        // dd($data);
-        $data = Price::orderBy('creation', 'desc')
-            ->groupBy('item_code')->get();
-        // dd($data);
-        return $data;
-        $data = DB::select("SELECT master_items.supplier, prices.item_code, prices.`description`, prices.price_buying, MAX(creation)
-        FROM master_items
-        INNER JOIN prices ON master_items.`id` = prices.`master_item_id`
-        GROUP BY prices.`item_code`
-        ORDER BY prices.`creation` DESC;
-        ");
-        dd($data);
-        return view('price_list', compact('data'));
+        if ($request->ajax()) {
+
+            $data = DB::select("SELECT master_items.supplier, prices.item_code, prices.`description`, prices.price_buying, MAX(creation), 
+                    SUM(prices.`price_buying`) - prices.`price_buying` AS deviation
+                            FROM master_items
+                            INNER JOIN prices ON master_items.`id` = prices.`master_item_id`
+                            GROUP BY prices.`item_code`
+                            ORDER BY prices.`creation` DESC;
+                    ");
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+
+                    $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm"><span class="fa fa-eye"></span></a>';
+
+                    return $btn;
+                })
+                // ->addColumn('price_buying', function ($data) {
+                //     if ($data->price_buying == 0) {
+                //         return '<label class="">$data->price_buying</label>';
+                //     } else {
+                //         return '<label class="badge badge-danger">Inactive</label>';
+                //     }
+                // })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('price_list');
+
+        // return Datatables::of($data)->make(true);
     }
 
     /**

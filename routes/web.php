@@ -24,6 +24,9 @@ Route::get('/material_receipt', 'MaterialReceiveController@get_material_receipt'
 Route::get('/item-price', 'ListPriceController@getDataPrice');
 Route::get('/item-from-po', 'ListPriceController@getItemPricePO');
 Route::get('/list-price', 'ListPriceController@index');
+Route::get('list-prices', ['uses' => 'ListPriceController@index', 'as' => 'prices.index']);
+
+// Route::resource('export', 'ExportController');
 
 
 Route::get('/show/{id}', 'MonitoringController@show');

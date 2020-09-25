@@ -70,6 +70,36 @@ class MonitoringController extends Controller
                 ->where('purchase_orders.status', 'LIKE', '%' . $status . '%')
                 ->paginate(5);
         }
+
+        $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')->paginate(5);
+        foreach ($data as $key => $dt) {
+            # code...
+            $check = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
+                ->select(DB::raw('sum(qty_receipt) as total_receipt'))
+                ->where('parent_po', $dt->naming_series)->first();
+
+            if (!empty($check)) {
+                # code...
+                $sum_order = Purchase_order_item::select(DB::raw('sum(qty) as total_qty'))
+                    ->where('naming_series_id', $dt->naming_series)
+                    ->first();
+                if ($check->total_receipt < $sum_order->total_qty) {
+                    # code...
+                    $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
+                        ->update([
+                            'status' => 'partial'
+                        ]);
+                } elseif ($check->total_receipt == $check->total_receipt) {
+                    # code...
+                    $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
+                        ->update([
+                            'status' => 'completed'
+                        ]);
+                }
+            }
+        }
+
+
         return view('index', compact('data'));
     }
 

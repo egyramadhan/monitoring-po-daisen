@@ -14,7 +14,7 @@
                         <div class="card-body">
                           <div class="card-body card-block">
                             <div class="col-sm-1">
-                                <a class="btn btn-success btn-sm" href="">History List Price</a>
+                                <a class="btn btn-success btn-sm" href="/list-prices">History List Price</a>
                             </div>
                             <div class="col-sm-1">
                               <a class="btn btn-warning btn-sm header-left" href="">Material Return</a>
