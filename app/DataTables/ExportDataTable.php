@@ -2,7 +2,6 @@
 
 namespace App\DataTables;
 
-// use App\ExportDataTable;
 use App\Price;
 use App\Purchase_order;
 use App\Purchase_order_item;
@@ -38,18 +37,19 @@ class ExportDataTable extends DataTable
     public function query(ExportDataTable $model)
     {
         // return $model->newQuery();
-        $data = DB::select("SELECT master_items.supplier, prices.item_code, prices.`description`, prices.price_buying, MAX(creation), 
-                    SUM(prices.`price_buying`) - prices.`price_buying` AS deviation
-                            FROM master_items
-                            INNER JOIN prices ON master_items.`id` = prices.`master_item_id`
-                            GROUP BY prices.`item_code`
-                            ORDER BY prices.`creation` DESC;
-                    ");
+        // $data = DB::select("SELECT master_items.supplier, prices.item_code, prices.`description`, prices.price_buying, MAX(creation), 
+        //             SUM(prices.`price_buying`) - prices.`price_buying` AS deviation
+        //                     FROM master_items
+        //                     INNER JOIN prices ON master_items.`id` = prices.`master_item_id`
+        //                     GROUP BY prices.`item_code`
+        //                     ORDER BY prices.`creation` DESC;
+        //             ");
+        $data = Price::select();
         // $data = DB::table('master_items')
         // ->join('prices','mater_items.id','=','prices.master_item_id')
         // ->select()
         // dd(json_encode($data));
-        return $this->applyScopes(json_encode($data));
+        return $this->applyScopes($data);
     }
 
     /**
@@ -60,7 +60,6 @@ class ExportDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            // ->setTableId('exportdatatable-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
@@ -85,11 +84,16 @@ class ExportDataTable extends DataTable
             //       ->printable(false)
             //       ->width(60)
             //       ->addClass('text-center'),
+            // Column::make('item_code'),
+            // Column::make('description'),
+            // Column::make('supplier'),
+            // Column::make('price_buying'),
+            // Column::make('deviation'),
+            Column::make('master_item_id'),
+            Column::make('no_po'),
             Column::make('item_code'),
             Column::make('description'),
-            Column::make('supplier'),
             Column::make('price_buying'),
-            Column::make('deviation'),
         ];
     }
 
@@ -100,8 +104,6 @@ class ExportDataTable extends DataTable
      */
     protected function filename()
     {
-        dd(11);
-
         return 'Export_' . date('YmdHis');
     }
 }

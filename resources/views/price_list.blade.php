@@ -94,8 +94,8 @@ ul.timeline > li:before {
 
                             </tbody>
                           </table>
-                          {{-- {!! $dataTable->table() !!}  --}}
-                          {{-- {!! $dataTable->scripts() !!} --}}
+                          {{-- {!! $dataTable->table() !!} 
+                          {!! $dataTable->scripts() !!} --}}
                           <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -119,7 +119,7 @@ ul.timeline > li:before {
                                             <a href="#">Awesome Employers</a>
                                             <a href="#" class="float-right">1 April, 2014</a>
                                             <p>Fusce ullamcorper ligula sit amet quam accumsan aliquet. Sed nulla odio, tincidunt vitae nunc vitae, mollis pharetra velit. Sed nec tempor nibh...</p>
-                                          </li> --}}
+                                          </li> 
                                         </ul>
                                       </div>
                                     </div>
@@ -149,11 +149,13 @@ ul.timeline > li:before {
     });
 </script> --}}
 <script type="text/javascript">
-  $(function () {
+  $(document).ready(function () {
     
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
+        dom: 'Blfrtip',
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
         ajax: "{{ route('prices.index') }}",
         columns: [
             {data: 'item_code', name: 'item_code'},
