@@ -43,49 +43,14 @@ ul.timeline > li:before {
                         <strong class="card-title">History List Price - Procurement</strong>
                     </div>
                     <div class="card-body">
-                        {{-- <table class="table table-striped table-bordered">
-                            <thead>
-                              <tr>
-                                <th scope="col">Item Code</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Supplier</th>
-                                <th scope="col">Last Price</th>
-                                <th scope="col">Deviation</th>
-                                <th scope="col">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data as $dt)
-                                  <tr>
-                                    <td>{{ $dt->item_code}}</td>
-                                    <td>{{ $dt->description}}</td>
-                                    <td>{{ $dt->supplier}}</td>
-                                    @if ($dt->price_buying == 0)
-                                    <td><span class="">{{ $dt->price_buying}}</span></td>
-                                    @elseif ($dt->price_buying != 0)
-                                    <td><span class="badge badge-success">{{ $dt->price_buying}}</span></td>
-                                    @endif
-                                    @if ($dt->deviation == 0)
-                                    <td><span class="">{{ $dt->deviation}}</span></td>
-                                    @elseif ($dt->deviation != 0)
-                                    <td><span class="badge badge-warning">{{ $dt->deviation}}</span></td>
-                                    @endif
-                                    <td> 
-                                      {{-- <a href="/show_history/{{ $dt->item_code }}" value="{{ $dt->item_code }}" class="btn btn-primary btn-sm btn_history" data-toggle="modal" data-target="#mediumModal"><span class="fa fa-eye"></span></a> --}}
-                                      {{-- <button class="btn btn-primary btn-sm btn_history" data-toggle="modal" data-target="#mediumModal" value="{{ $dt->item_code }}"><span class="fa fa-eye"></span></button>
-                                    </td>
-                                  </tr>
-                                @endforeach 
-                            </tbody>
-                          </table>  --}}
-                          {{-- {{ $data->links() }} --}}
                           <table class="table table-striped table-boldered nowrap data-table" id="datatable" style="width:100%;">
                             <thead>
                               <tr>
                                 <th>Item Code</th>
                                 <th>Description</th>
                                 <th>Supplier</th>
-                                <th>Last Price</th>
+                                <th>Price</th>
+                                <th></th>
                                 <th>Deviation</th>
                                 <th>Action</th>
                               </tr>
@@ -96,7 +61,7 @@ ul.timeline > li:before {
                           </table>
                           {{-- {!! $dataTable->table() !!} 
                           {!! $dataTable->scripts() !!} --}}
-                          <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+                          {{-- <div class="modal fade" id="ajaxModel" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                   <div class="container mt-5 mb-5">
@@ -110,7 +75,7 @@ ul.timeline > li:before {
                                             <p name="item_code"></p>
                                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque diam non nisi semper, et elementum lorem ornare. Maecenas placerat facilisis mollis. Duis sagittis ligula in sodales vehicula....</p>
                                           </li>
-                                          {{-- <li>
+                                          <li>
                                             <a href="#">21 000 Job Seekers</a>
                                             <a href="#" class="float-right">4 March, 2014</a>
                                             <p>Curabitur purus sem, malesuada eu luctus eget, suscipit sed turpis. Nam pellentesque felis vitae justo accumsan, sed semper nisi sollicitudin...</p>
@@ -126,28 +91,48 @@ ul.timeline > li:before {
                                   </div>
                                 </div>
                             </div>
-                         </div>
+                         </div> --}}
+                         <div class="modal fade" id="ajaxModel" aria-hidden="true">
+                          <div class="modal-dialog">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h4 class="modal-title" id="modelHeading"></h4>
+                                  </div>
+                                  <div class="modal-body">
+                                      <form id="productForm" name="productForm" class="form-horizontal">
+                                         <input type="hidden" name="product_id" id="product_id">
+                                          <div class="form-group">
+                                              <label for="name" class="col-sm-2 control-label">Name</label>
+                                              <div class="col-sm-12">
+                                                  <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="" maxlength="50" required="">
+                                              </div>
+                                          </div>
+                           
+                                          <div class="form-group">
+                                              <label class="col-sm-2 control-label">Details</label>
+                                              <div class="col-sm-12">
+                                                  <textarea id="detail" name="detail" required="" placeholder="Enter Details" class="form-control"></textarea>
+                                              </div>
+                                          </div>
+                            
+                                          <div class="col-sm-offset-2 col-sm-10">
+                                           <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
+                                           </button>
+                                          </div>
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div> 
-{{-- <script>
-      $(document).on('click','.btn_history',function(){
-        var url = "http://localhost:8000/show_history";
-        var tour_id= $(this).val();
-        $.get(url + '/' + tour_id, function (data) {
-            //success data
-            console.log(data);
-            $('#item_code').val(data);
-            $('#name').val(data.name);
-            $('#details').val(data.details);
-            $('#btn-save').val("update");
-            $('#mediumModal').modal('show');
-        }) 
-    });
-</script> --}}
+<script>
+      
+</script>
 <script type="text/javascript">
   $(document).ready(function () {
     
@@ -155,17 +140,33 @@ ul.timeline > li:before {
         processing: true,
         serverSide: true,
         dom: 'Blfrtip',
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+            buttons: ['csv', 'excel', 'pdf', 'print'],
         ajax: "{{ route('prices.index') }}",
         columns: [
             {data: 'item_code', name: 'item_code'},
             {data: 'description', name: 'description'},
             {data: 'supplier', name: 'supplier'},
             {data: 'price_buying', name: 'price_buying'},
+            {data: 'indicator', name: 'indicator'},
             {data: 'deviation', name: 'deviation'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
+
+    $('body').on('click', '.showProduct', function () {
+      var product_id = $(this).data('id');
+      console.log(product_id)
+      $.get("{{ route('prices.index') }}" +'/'+ product_id, function (data) {
+        console.log(data)
+          // $('#modelHeading').html("Edit Product");
+          // $('#saveBtn').val("edit-user");
+          $('#ajaxModel').modal('show');
+          // $('#product_id').val(data.id);
+          // $('#name').val(data.name);
+          // $('#detail').val(data.detail);
+      })
+   });
+
   });
 </script>
 @endsection

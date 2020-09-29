@@ -116,18 +116,20 @@ class ListPriceController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm"><span class="fa fa-eye"></span></a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->item_code . '" data-original-title="Edit" class="edit btn btn-primary btn-sm showProduct">Show</a>';
 
                     return $btn;
                 })
-                // ->addColumn('price_buying', function ($data) {
-                //     if ($data->price_buying == 0) {
-                //         return '<label class="">$data->price_buying</label>';
-                //     } else {
-                //         return '<label class="badge badge-danger">Inactive</label>';
-                //     }
-                // })
-                ->rawColumns(['action'])
+                ->addColumn('indicator', function ($data) {
+                    if ($data->price_buying != $data->deviation) {
+                        return "<label class='badge badge-success'><span class='fa fa-sort-up'></span></label>";
+                    } elseif ($data->price_buying == 0 && $data->deviation == 0) {
+                        return "<label class='badge badge-secondary'><span class='fa fa-minus'></span></label>";
+                    } else {
+                        return "<label class='badge badge-danger'><span class='fa fa-sort-desc'></span></label>";
+                    }
+                })
+                ->rawColumns(['action', 'indicator'])
                 ->make(true);
         }
         return view('price_list');
@@ -165,7 +167,7 @@ class ListPriceController extends Controller
     public function show($item_code)
     {
         $shows = Price::where('item_code', $item_code)->get();
-        return $shows;
+        return response()->json($shows);
     }
 
     /**

@@ -30,6 +30,8 @@ Route::get('list-prices', ['uses' => 'ListPriceController@index', 'as' => 'price
 
 
 Route::get('/show/{id}', 'MonitoringController@show');
-Route::get('/show_history/{item_code}', 'ListPriceController@show');
+// Route::get('/show_history/{item_code}', 'ListPriceController@show');
+// Route::get('/show_history/{item_code}', ['uses' => 'ListPriceController@show', 'as' => 'show.index']);
+Route::resource('prices', 'ListPriceController');
 Route::get('autocomplete', array('as' => 'autocomplete', 'uses' => 'SearchController@autocomplete'));
 Route::get('autocomplete_po', array('as' => 'autocomplete_po', 'uses' => 'SearchController@autocomplete_po'));
