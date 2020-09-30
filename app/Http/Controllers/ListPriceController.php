@@ -133,8 +133,6 @@ class ListPriceController extends Controller
                 ->make(true);
         }
         return view('price_list');
-
-        // return Datatables::of($data)->make(true);
     }
 
     /**
