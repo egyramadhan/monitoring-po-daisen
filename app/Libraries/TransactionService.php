@@ -363,4 +363,48 @@ class TransactionService
         $body = json_decode($response, true);
         return $body;
     }
+
+    public function getMaterialReturn()
+    {
+        static::login();
+        $url = $this->url . 'api/resource/Purchase%20Receipt?fields=["name","po_no","is_return","supplier","supplier_delivery_note","delivery_time","posting_date","posting_time"]&filters=[["Purchase%20Receipt","is_return","=","1"]]&limit_page_length=9999999999999999';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_TIMEOUT, (120));
+        $response = curl_exec($ch);
+        $header = curl_getinfo($ch);
+        $error_no = curl_errno($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+        $body = json_decode($response, true);
+        return $body;
+    }
+
+    public function getMaterialReturnItems($name)
+    {
+        static::login();
+        $dataFields = json_encode(["item_group", "amount", "qty", "rate", "stock_uom", "item_name", "uom", "description"]);
+        $url = $this->url . 'api/resource/Purchase%20Receipt/' . $name . '?fields=["item_code","qty","rate","uom","description"]&limit_page_length=9999999999999999';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_TIMEOUT, (120));
+        $response = curl_exec($ch);
+        $header = curl_getinfo($ch);
+        $error_no = curl_errno($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        $body = json_decode($response, true);
+        return $body;
+    }
 }

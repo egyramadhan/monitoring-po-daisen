@@ -17,10 +17,13 @@ Route::get('/', function () {
 
 Route::get('/monitoring', 'MonitoringController@index');
 Route::get('/monitoring-po', 'MonitoringController@dashboard');
+// Route::get('/data-receipt', 'MonitoringController@dataMatrialReceipt');
+Route::get('data-receipt/{id}', ['uses' => 'MonitoringController@dataMaterialReceipt', 'as' => 'data.receipt']);
 
 Route::get('/purchase_requests', 'PurchaseRequestController@get_material_request');
 Route::get('/purchase_orders', 'PurchaseOrderController@get_purchase_order');
 Route::get('/material_receipt', 'MaterialReceiveController@get_material_receipt');
+Route::get('/material_return', 'MaterialReturnController@getReturn');
 Route::get('/item-price', 'ListPriceController@getDataPrice');
 Route::get('/item-from-po', 'ListPriceController@getItemPricePO');
 Route::get('/list-price', 'ListPriceController@index');

@@ -10,9 +10,12 @@ use App\Purchase_order;
 use App\Purchase_order_item;
 use App\Material_receive;
 use App\Material_receive_item;
+use App\MaterialReturn;
+use App\MaterialItemReturn;
 use App\monitoring_po_daisen;
 use DB;
-use Facade\FlareClient\Http\Response;
+// use Facade\FlareClient\Http\Response;
+use Response;
 
 class MonitoringController extends Controller
 {
@@ -40,38 +43,38 @@ class MonitoringController extends Controller
         if (empty($po_number) && empty($date) && empty($supplier) && empty($status)) {
             # code...
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-                ->paginate(5);
+                ->paginate(10);
         }
 
         if (!empty($po_number)) {
             # code...
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
                 ->where('purchase_orders.naming_series', 'LIKE', '%' . $po_number . '%')
-                ->paginate(5);
+                ->paginate(10);
         }
 
         if (!empty($supplier)) {
             # code...
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
                 ->where('purchase_orders.supplier', 'LIKE', '%' . $supplier . '%')
-                ->paginate(5);
+                ->paginate(10);
         }
 
         if (!empty($date)) {
             # code...
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
                 ->where('purchase_orders.posting_date', 'LIKE', '%' . $date . '%')
-                ->paginate(5);
+                ->paginate(10);
         }
 
         if (!empty($status)) {
             # code...
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
                 ->where('purchase_orders.status', 'LIKE', '%' . $status . '%')
-                ->paginate(5);
+                ->paginate(10);
         }
 
-        $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')->paginate(5);
+        $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')->paginate(10);
         foreach ($data as $key => $dt) {
             # code...
             $check = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
@@ -218,6 +221,41 @@ class MonitoringController extends Controller
             }
         }
 
+        $check_if_returns = DB::table('material_returns')
+            ->join('material_return_items', 'material_returns.naming_series', '=', 'material_return_items.naming_series_id')
+            ->where('material_returns.parent_po', '=', $id)
+            ->where(function ($query) {
+                $query->where('material_return_items.is_calculated', '=', "0");
+            })
+            ->get();
+
+        if (!empty($check_if_returns)) {
+            # code...
+            foreach ($check_if_returns as $key => $check_if_return) {
+                # code...
+                if ($check_if_return->is_calculated === "0") {
+                    # code...
+                    $number_po = $check_if_return->parent_po;
+                    $code = $check_if_return->code;
+                    $receipt = $check_if_return->qty_return;
+                    $check_have_qty_return = DB::table('monitoring_po_daisens')->where('po_no', '=', $number_po)
+                        ->where('code', '=', $code)
+                        ->first();
+                    // dd($receipt);
+                    if (!empty($check_have_qty_return->qty_receipt)) {
+                        # code...
+                        $update_qty_return = DB::table('monitoring_po_daisens')->where('po_no', '=', $number_po)
+                            ->where('code', '=', $code)
+                            ->update(['qty_receipt' => $receipt + $check_have_qty_return->qty_receipt]);
+                        $update_calculated = MaterialItemReturn::where('naming_series_id', $check_if_return->naming_series)
+                            ->update([
+                                'is_calculated' => '1'
+                            ]);
+                    }
+                }
+            }
+        }
+
         $po = DB::table('monitoring_po_daisens')
             ->select('code', 'description', 'po_qty', 'uom', 'currency', DB::raw('sum(qty_receipt) as qty_receipt'), DB::raw('(sum(qty_receipt) - po_qty) as balance'))
             ->where('po_no', $id)
@@ -229,9 +267,14 @@ class MonitoringController extends Controller
             ->where('material_receives.parent_po', '=', $id)
             ->get();
 
+        $material_return = DB::table('material_returns')
+            ->join('material_return_items', 'material_returns.naming_series', '=', 'material_return_items.naming_series_id')
+            ->where('material_returns.parent_po', '=', $id)
+            ->get();
+
         $counter_parent = 0;
         $counter_child = 0;
-        return view('detail_po', compact('po', 'parent_po', 'material_receipt', 'counter_parent', 'counter_child'));
+        return view('detail_po', compact('po', 'parent_po', 'material_receipt', 'material_return', 'counter_parent', 'counter_child'));
     }
 
     /**
@@ -266,5 +309,14 @@ class MonitoringController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function dataMaterialReceipt($id)
+    {
+        $material_receipt = DB::table('material_receives')
+            ->join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
+            ->where('material_receives.parent_po', '=', $id)
+            ->get();
+        return response()->json($material_receipt, 200);
     }
 }
