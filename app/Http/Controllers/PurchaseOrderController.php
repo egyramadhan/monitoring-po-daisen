@@ -49,6 +49,13 @@ class PurchaseOrderController extends Controller
         }
         return response()->json(['message' => 'data updated', 'code' => '200']);
     }
+
+    public function cekStatus()
+    {
+        $service = new TransactionService();
+        $get_purchase_orders = $service->statusClose();
+        dd($get_purchase_order);
+    }
     /**
      * Display a listing of the resource.
      *

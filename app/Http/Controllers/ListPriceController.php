@@ -164,7 +164,7 @@ class ListPriceController extends Controller
      */
     public function show($item_code)
     {
-        $shows = Price::where('item_code', $item_code)->get();
+        $shows = Price::where('item_code', $item_code)->orderBy('no_po', 'desc')->get();
         return response()->json($shows);
     }
 

@@ -407,4 +407,25 @@ class TransactionService
         $body = json_decode($response, true);
         return $body;
     }
+
+    public function statusClose()
+    {
+        static::login();
+        $url = $this->url . 'api/resource/Purchase%20Order?fields=["name","supplier","transaction_date","schedule_date","material_request"]&filters=[["Purchase%20Order","status","=","Closed"]]&limit_page_length=9999999999999999';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, dirname(__FILE__) .  '(cookie cracker yummy)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_TIMEOUT, (120));
+        $response = curl_exec($ch);
+        $header = curl_getinfo($ch);
+        $error_no = curl_errno($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+        $body = json_decode($response, true);
+        return $body;
+    }
 }

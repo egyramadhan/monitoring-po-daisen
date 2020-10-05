@@ -117,7 +117,7 @@ ul.timeline > li:before {
               console.log(data[i])
               var showLog = `<div class="row"><div class="col-md-6 offset-md-3">
                               <ul class="timeline">
-                                <li><a target="_blank" href="#"><strong>${data[i].no_po}</strong></a>
+                                <li><a target="_blank" href="/show/${data[i].no_po}"><strong>${data[i].no_po}</strong></a>
                                 <a href="#" class="float-right">${data[i].creation}</a><p>${data[i].item_code}<br>${data[i].description}<br><strong>Rp. ${data[i].price_buying}</strong></p>
                                 </li>
                               </ul>
