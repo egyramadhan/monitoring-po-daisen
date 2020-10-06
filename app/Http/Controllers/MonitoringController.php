@@ -86,17 +86,21 @@ class MonitoringController extends Controller
                 $sum_order = Purchase_order_item::select(DB::raw('sum(qty) as total_qty'))
                     ->where('naming_series_id', $dt->naming_series)
                     ->first();
+                $persentase = $check->total_receipt / $sum_order->total_qty * 100;
+
                 if ($check->total_receipt < $sum_order->total_qty) {
                     # code...
                     $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
                         ->update([
-                            'status' => 'partial'
+                            'status' => 'partial',
+                            'percentage' => $persentase
                         ]);
                 } elseif ($check->total_receipt == $check->total_receipt) {
                     # code...
                     $update_data_po = Purchase_order::where('naming_series', $dt->naming_series)
                         ->update([
-                            'status' => 'completed'
+                            'status' => 'completed',
+                            'percentage' => $persentase
                         ]);
                 }
             }
@@ -229,6 +233,7 @@ class MonitoringController extends Controller
             })
             ->get();
 
+        //return banrang 
         if (!empty($check_if_returns)) {
             # code...
             foreach ($check_if_returns as $key => $check_if_return) {
@@ -255,6 +260,9 @@ class MonitoringController extends Controller
                 }
             }
         }
+
+        //persentase
+
 
         $po = DB::table('monitoring_po_daisens')
             ->select('code', 'description', 'po_qty', 'uom', 'currency', DB::raw('sum(qty_receipt) as qty_receipt'), DB::raw('(sum(qty_receipt) - po_qty) as balance'))

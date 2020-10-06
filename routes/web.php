@@ -29,6 +29,8 @@ Route::get('/item-from-po', 'ListPriceController@getItemPricePO');
 Route::get('/list-price', 'ListPriceController@index');
 Route::get('list-prices', ['uses' => 'ListPriceController@index', 'as' => 'prices.index']);
 
+Route::get('/cek-status', 'PurchaseOrderController@cekStatus');
+
 // Route::resource('export', 'ExportController');
 
 

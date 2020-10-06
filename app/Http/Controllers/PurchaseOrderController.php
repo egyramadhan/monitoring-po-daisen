@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Libraries\TransactionService;
+use App\monitoring_po_daisen;
 use App\Purchase_order;
 use App\Purchase_order_item;
 use APP\Price;
@@ -53,8 +54,19 @@ class PurchaseOrderController extends Controller
     public function cekStatus()
     {
         $service = new TransactionService();
-        $get_purchase_orders = $service->statusClose();
-        dd($get_purchase_order);
+        $get_data_closes = $service->statusClose();
+
+        foreach ($get_data_closes['data'] as $key => $get_data_close) {
+            # code...
+            $check_data = Purchase_order::where('naming_series', $get_data_close['name'])->first();
+            if (!empty($check_data)) {
+                # code...
+                $data_update = Purchase_order::where('naming_series', $get_data_close['name'])
+                    ->update(['status_close' => 'close']);
+            }
+        }
+
+        return response()->json(['message' => 'data updated', 'code' => '200']);
     }
     /**
      * Display a listing of the resource.
