@@ -15,6 +15,9 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::get('export-laravel', 'ExportMonitoringController@export');
+Route::get('datas', 'ExportMonitoringController@dataShow');
+
 Route::get('/monitoring', 'MonitoringController@index');
 Route::get('/monitoring-po', 'MonitoringController@dashboard');
 // Route::get('/data-receipt', 'MonitoringController@dataMatrialReceipt');

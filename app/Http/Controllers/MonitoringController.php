@@ -51,6 +51,7 @@ class MonitoringController extends Controller
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
                 ->where('purchase_orders.naming_series', 'LIKE', '%' . $po_number . '%')
                 ->paginate(10);
+            // dd($data);
         }
 
         if (!empty($supplier)) {
@@ -74,7 +75,7 @@ class MonitoringController extends Controller
                 ->paginate(10);
         }
 
-        $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')->paginate(10);
+        // $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')->paginate(10);
         foreach ($data as $key => $dt) {
             # code...
             $check = Material_receive::join('material_receive_items', 'material_receives.naming_series', '=', 'material_receive_items.naming_series_id')
