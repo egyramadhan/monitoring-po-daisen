@@ -240,7 +240,7 @@ class TransactionService
     {
         static::login();
         $dataFields = json_encode(["item_group", "amount", "qty", "rate", "stock_uom", "item_name", "uom", "description"]);
-        $url = $this->url . 'api/resource/Purchase%20Receipt/' . $name . '?fields=["item_code","qty","rate","uom","description"]&limit_page_length=9999999999999999';
+        $url = $this->url . 'api/resource/Purchase%20Receipt/' . $name . '?fields=["purchase_order","item_code","qty","rate","uom","description"]&limit_page_length=9999999999999999';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
@@ -389,7 +389,7 @@ class TransactionService
     {
         static::login();
         $dataFields = json_encode(["item_group", "amount", "qty", "rate", "stock_uom", "item_name", "uom", "description"]);
-        $url = $this->url . 'api/resource/Purchase%20Receipt/' . $name . '?fields=["item_code","qty","rate","uom","description"]&limit_page_length=9999999999999999';
+        $url = $this->url . 'api/resource/Purchase%20Receipt/' . $name . '?fields=["purchase_order","item_code","qty","rate","uom","description"]&limit_page_length=9999999999999999';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);

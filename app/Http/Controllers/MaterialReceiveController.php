@@ -34,6 +34,7 @@ class MaterialReceiveController extends Controller
                     foreach ($get_material_receipt_Items_singles as $key => $get_material_receipt_Items_single) {
                         $purchase_request_item_insert = Material_receive_item::create([
                             'naming_series_id' => $get_material_receipt_Items_single['parent'],
+                            'purchase_order' => $get_material_receipt_Items_single['purchase_order'],
                             'code' => $get_material_receipt_Items_single['item_code'],
                             'description' => $get_material_receipt_Items_single['description'],
                             'qty_receipt' => $get_material_receipt_Items_single['qty'],
