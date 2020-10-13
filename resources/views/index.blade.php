@@ -80,23 +80,23 @@
                                         @if ( $dt->status  == 'to receipt')
                                         <td><span class="badge badge-warning">to receipt</span>
                                           <br>
-                                          <span class="badge badge-success">{{ $dt->status_close}}</span>
+                                          <span class="badge badge-danger">{{ $dt->status_close}}</span>
                                           <br>
-                                          <span class="badge badge-secondary">{{ $dt->percentage}}%</span>
+                                          <span class="badge badge-info">{{ $dt->percentage}}%</span>
                                         </td>
                                         @elseif ( $dt->status == 'partial')
                                         <td><span class="badge badge-warning">partial</span>
                                           <br>
-                                          <span class="badge badge-success">{{ $dt->status_close}}</span>
+                                          <span class="badge badge-danger">{{ $dt->status_close}}</span>
                                           <br>
-                                          <span class="badge badge-secondary">{{ $dt->percentage}}%</span>
+                                          <span class="badge badge-info">{{ $dt->percentage}}%</span>
                                         </td>  
                                         @else 
-                                        <td><span class="badge badge-primary">completed</span>
+                                        <td><span class="badge badge-success">completed</span>
                                           <br>
-                                          <span class="badge badge-success">{{ $dt->status_close}}</span>
+                                          <span class="badge badge-danger">{{ $dt->status_close}}</span>
                                           <br>
-                                          <span class="badge badge-secondary">{{ $dt->percentage}}%</span>
+                                          <span class="badge badge-info">{{ $dt->percentage}}%</span>
                                         </td>
                                         @endif
                                         <td><a href="/show/{{ $dt['naming_series'] }}" class="btn btn-primary"><i class="fa fa-info"></i></a></td>
