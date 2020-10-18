@@ -30,10 +30,11 @@
                                   <input type="text" name="po_number" placeholder="Po Number" class="typeahead2 form-control">
                                 </div>
                               </div>
-  
                               <div class="col-md-2">
                                 <div class="form-group">
-                                  <input type="date" name="dates" placeholder="Date Order" class="form-control">
+                                  <input type="text" name="daterange" class="form-control" value="01/01/2020 - 01/15/2020" />
+                                  
+                                  {{-- <input type="date" name="dates" placeholder="Date Order" class="form-control"> --}}
                                 </div>
                               </div>
   
@@ -111,4 +112,13 @@
             </div>
         </div>
     </div> 
+    <script>
+      $(function() {
+        $('input[name="daterange"]').daterangepicker({
+          opens: 'left'
+        }, function(start, end, label) {
+          console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+      });
+      </script>
 @endsection

@@ -17,9 +17,7 @@ Route::get('/', function () {
 });
 
 Route::get('export-laravel', 'ExportMonitoringController@export');
-Route::get('/download', function () {
-    return Excel::download(new MonitoringExport, 'monitoring.xlsx');
-});
+Route::get('/download', 'ExportMonitoringController@ExportMonitoring');
 Route::get('datas', 'ExportMonitoringController@dataShow');
 
 Route::get('/monitoring', 'MonitoringController@index');
