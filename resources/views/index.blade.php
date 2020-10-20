@@ -30,12 +30,24 @@
                                   <input type="text" name="po_number" placeholder="Po Number" class="typeahead2 form-control">
                                 </div>
                               </div>
-                              <div class="col-md-2">
-                                <div class="form-group">
-                                  <input type="text" name="daterange" class="form-control" value="01/01/2020 - 01/15/2020" />
+                              <div class="col-md-3">
+                                {{-- <div class="form-group">
+                                 
                                   
-                                  {{-- <input type="date" name="dates" placeholder="Date Order" class="form-control"> --}}
-                                </div>
+                                  <input type="text" name="from_date" id="from_date" placeholder="From Order" class="form-control">
+                                  to
+                                  <input type="text" name="to_date" id="to_date" placeholder="To Order" class="form-control">
+                                </div> --}}
+                                <div class="row input-daterange">
+                                  <div class="col-md-4">
+                                      <input type="text" name="from_date" id="from_date" class="form-control" placeholder="From Date"
+                                          readonly />
+                                  </div>
+                                  <div class="col-md-4">
+                                      <input type="text" name="to_date" id="to_date" class="form-control" placeholder="To Date"
+                                          readonly />
+                                  </div>
+                              </div>
                               </div>
   
                               <div class="col-md-3">
@@ -113,12 +125,32 @@
         </div>
     </div> 
     <script>
+//  $(function () {
+//     $('.input-daterange').datepicker({
+//                 todayBtn: 'linked',
+//                 format: 'yyyy-mm-dd',
+//                 autoclose: true
+//             });
+//     });
+         
       $(function() {
-        $('input[name="daterange"]').daterangepicker({
-          opens: 'left'
-        }, function(start, end, label) {
-          console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+          $('input[name="from_date"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 2015,
+            maxYear: parseInt(moment().format('YYYY'),10)
+          });
+          $('input[name="to_date"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 2015,
+            maxYear: parseInt(moment().format('YYYY'),10)
+          });
         });
-      });
-      </script>
+        
+    //  $(function() {
+         
+    //     });
+    
+  </script>
 @endsection

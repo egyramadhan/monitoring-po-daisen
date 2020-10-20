@@ -102,9 +102,8 @@ ul.timeline > li:before {
       var product_id = $(this).data('id');
       console.log(product_id)
       $.get("{{ route('prices.index') }}" +'/'+ product_id, function (data) {
-
+        
           $('#ajaxModel').on('hidden.bs.modal', function (e) {
-            console.log('asee')
             e.preventDefault();
             location.reload()
             })

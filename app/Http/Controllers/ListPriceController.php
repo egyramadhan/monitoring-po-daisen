@@ -82,21 +82,6 @@ class ListPriceController extends Controller
                     'creation' => $get_item_price->created_at
                 ]);
             }
-
-            // if (!empty($check_item_price)) {
-            //     # code...
-            //     if ($check_item_price->price_buying != $get_item_price->price) {
-            //         # code...
-            //         $data_insert = Price::create([
-            //             'master_item_id' => $check_item_price->id,
-            //             'item_code' => $get_item_price->code,
-            //             'description' => $get_item_price->description,
-            //             'price_buying' => $get_item_price->price,
-            //             'currency' => 'IDR',
-            //             'creation' => $get_item_price->created_at
-            //         ]);
-            //     }
-            // }
         }
         return response()->json(['message' => 'data updated', 'code' => '200']);
     }
@@ -104,7 +89,6 @@ class ListPriceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-
             $data = DB::select("SELECT master_items.supplier, prices.item_code, prices.`description`, prices.price_buying, MAX(creation), 
                     SUM(prices.`price_buying`) - prices.`price_buying` AS deviation
                             FROM master_items
