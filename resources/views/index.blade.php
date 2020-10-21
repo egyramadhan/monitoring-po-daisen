@@ -25,38 +25,23 @@
                           </div>
                           <div class="card-body card-block">
                             <form action="/monitoring-po" method="get">
-                              <div class="col-md-3">
+                              <div class="col-md-2">
                                 <div class="form-group">
                                   <input type="text" name="po_number" placeholder="Po Number" class="typeahead2 form-control">
                                 </div>
                               </div>
-                              <div class="col-md-3">
-                                {{-- <div class="form-group">
-                                 
-                                  
-                                  <input type="text" name="from_date" id="from_date" placeholder="From Order" class="form-control">
-                                  to
-                                  <input type="text" name="to_date" id="to_date" placeholder="To Order" class="form-control">
-                                </div> --}}
-                                <div class="row input-daterange">
-                                  <div class="col-md-4">
-                                      <input type="text" name="from_date" id="from_date" class="form-control" placeholder="From Date"
-                                          readonly />
-                                  </div>
-                                  <div class="col-md-4">
-                                      <input type="text" name="to_date" id="to_date" class="form-control" placeholder="To Date"
-                                          readonly />
-                                  </div>
+                              <div class="col-md-2">
+                                <input type="date" name="from_date" id="from_date" class="form-control" placeholder="From Date"/>
                               </div>
+                              <div class="col-md-2">
+                                <input type="date" name="to_date" id="to_date" class="form-control" placeholder="To Date"/>
                               </div>
-  
-                              <div class="col-md-3">
+                              <div class="col-md-2">
                                 <div class="form-group">
                                   <input class="typeahead1 form-control" name="supplier" placeholder="Supplier" type="text">
                                 </div>
                               </div>
-
-                              <div class="col-md-3">
+                              <div class="col-md-2">
                                 <div class="form-group">
                                   <input type="text" name="statues" placeholder="Status" class="form-control">
                                 </div>
@@ -133,20 +118,20 @@
 //             });
 //     });
          
-      $(function() {
-          $('input[name="from_date"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            minYear: 2015,
-            maxYear: parseInt(moment().format('YYYY'),10)
-          });
-          $('input[name="to_date"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            minYear: 2015,
-            maxYear: parseInt(moment().format('YYYY'),10)
-          });
-        });
+      // $(function() {
+      //     $('input[name="from_date"]').daterangepicker({
+      //       singleDatePicker: true,
+      //       showDropdowns: true,
+      //       minYear: 2015,
+      //       maxYear: parseInt(moment().format('YYYY'),10)
+      //     });
+      //     $('input[name="to_date"]').daterangepicker({
+      //       singleDatePicker: true,
+      //       showDropdowns: true,
+      //       minYear: 2015,
+      //       maxYear: parseInt(moment().format('YYYY'),10)
+      //     });
+      //   });
         
     //  $(function() {
          

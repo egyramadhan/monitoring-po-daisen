@@ -34,13 +34,14 @@ class MonitoringController extends Controller
     public function dashboard(Request $request)
     {
         $po_number = $request->po_number;
-        $date = $request->dates;
+        $date1 = $request->from_date;
+        $date2 = $request->to_date;
         $supplier = $request->supplier;
         $status = $request->statues;
 
 
-
-        if (empty($po_number) && empty($date) && empty($supplier) && empty($status)) {
+        // dd($request->from_date);
+        if (empty($po_number) && empty($date) && empty($supplier) && empty($status) && empty($date1) && empty($date2)) {
             # code...
             $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
                 ->paginate(10);
@@ -61,11 +62,19 @@ class MonitoringController extends Controller
                 ->paginate(10);
         }
 
-        if (!empty($date)) {
+        if (!empty($date1) && !empty($date2)) {
             # code...
-            $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
-                ->where('purchase_orders.posting_date', 'LIKE', '%' . $date . '%')
-                ->paginate(10);
+            if ($date1 === $date2) {
+                # code...
+                $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+                    ->where('purchase_orders.posting_date', 'LIKE', '%' . $date1 . '%')
+                    ->paginate(10);
+            } else {
+                # code...
+                $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')
+                    ->whereBetween('purchase_orders.posting_date', [$date1, $date2])
+                    ->paginate(10);
+            }
         }
 
         if (!empty($status)) {
@@ -74,7 +83,6 @@ class MonitoringController extends Controller
                 ->where('purchase_orders.status', 'LIKE', '%' . $status . '%')
                 ->paginate(10);
         }
-
         // $data = Purchase_request::join('purchase_orders', 'purchase_requests.naming_series', '=', 'purchase_orders.material_request')->paginate(10);
         foreach ($data as $key => $dt) {
             # code...
